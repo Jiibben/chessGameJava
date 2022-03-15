@@ -1,111 +1,126 @@
 package game.board;
 
 import game.actor.pieces.*;
+import game.actor.players.Player;
 import utilities.Coordinates;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class Board extends JPanel {
+public class Board extends JPanel implements ActionListener {
+    //settings
     public static int NUMBEROFROW = 8;
     public static int NUMBEROFCOL = 8;
+    //cell of board
     private final ArrayList<ArrayList<BoardCell>> cells = new ArrayList<>(NUMBEROFROW);
+    //pieces on board
+    private final Piece[] pieces = {new Rook(Piece.Side.BLACK, new Coordinates(0, 0), this), new Rook(Piece.Side.BLACK, new Coordinates(7, 0), this), new Knight(Piece.Side.BLACK, new Coordinates(1, 0), this), new Knight(Piece.Side.BLACK, new Coordinates(6, 0), this), new Bishop(Piece.Side.BLACK, new Coordinates(2, 0), this), new Bishop(Piece.Side.BLACK, new Coordinates(5, 0), this), new Queen(Piece.Side.BLACK, new Coordinates(3, 0), this), new King(Piece.Side.BLACK, new Coordinates(4, 0), this), new Pawn(Piece.Side.BLACK, new Coordinates(0, 1), this), new Pawn(Piece.Side.BLACK, new Coordinates(1, 1), this), new Pawn(Piece.Side.BLACK, new Coordinates(2, 1), this), new Pawn(Piece.Side.BLACK, new Coordinates(3, 1), this), new Pawn(Piece.Side.BLACK, new Coordinates(4, 1), this), new Pawn(Piece.Side.BLACK, new Coordinates(5, 1), this), new Pawn(Piece.Side.BLACK, new Coordinates(6, 1), this), new Pawn(Piece.Side.BLACK, new Coordinates(7, 1), this), new Rook(Piece.Side.WHITE, new Coordinates(0, 7), this), new Rook(Piece.Side.WHITE, new Coordinates(7, 7), this), new Knight(Piece.Side.WHITE, new Coordinates(1, 7), this), new Knight(Piece.Side.WHITE, new Coordinates(6, 7), this), new Bishop(Piece.Side.WHITE, new Coordinates(2, 7), this), new Bishop(Piece.Side.WHITE, new Coordinates(5, 7), this), new Queen(Piece.Side.WHITE, new Coordinates(3, 7), this), new King(Piece.Side.WHITE, new Coordinates(4, 7), this), new Pawn(Piece.Side.WHITE, new Coordinates(0, 6), this), new Pawn(Piece.Side.WHITE, new Coordinates(1, 6), this), new Pawn(Piece.Side.WHITE, new Coordinates(2, 6), this), new Pawn(Piece.Side.WHITE, new Coordinates(3, 6), this), new Pawn(Piece.Side.WHITE, new Coordinates(4, 6), this), new Pawn(Piece.Side.WHITE, new Coordinates(5, 6), this), new Pawn(Piece.Side.WHITE, new Coordinates(6, 6), this), new Pawn(Piece.Side.WHITE, new Coordinates(7, 6), this),};
 
+    //players
+    private final Player whitePlayer = new Player(Piece.Side.WHITE);
+    private final Player blackPlayer = new Player(Piece.Side.BLACK);
+    private Player activePlayer = whitePlayer;
+
+    //state handling
+    public enum GameState {
+        SELECTION, MOVEMENT
+    }
+
+    private GameState currentGameState = GameState.SELECTION;
 
     public Board() {
+        //layout handler
         this.setLayout(new GridLayout(NUMBEROFROW, NUMBEROFCOL));
+        //adding every cell
         for (int y = 0; y < NUMBEROFROW; y++) {
             ArrayList<BoardCell> line = new ArrayList<>();
             for (int x = 0; x < NUMBEROFCOL; x++) {
                 BoardCell cell = new BoardCell(new Coordinates(x, y));
+                cell.addActionListener(this);
                 line.add(cell);
                 this.add(cell);
             }
             this.cells.add(line);
-
         }
-        this.setVisible(true);
+
+        //placing pieces
         this.placePieces();
+        //set board visible
+        this.setVisible(true);
     }
 
-    private BoardCell getCell(int x, int y) {
+    //get cell from board
+    public BoardCell getCell(int x, int y) {
         return this.cells.get(y).get(x);
     }
 
-
-
-
-    //todo better the pieces placement
-    private void placePieces() {
-        for (int y = 0; y < NUMBEROFROW; y++) {
-            for (int x = 0; x < NUMBEROFCOL; x++) {
-
-                //pawn placement
-                if (y == 1) {
-                    Piece blackPawn = new Pawn(Piece.Side.BLACK);
-                    this.getCell(x, y).addPiece(blackPawn);
-                }
-                else if (y == 6){
-                    Piece whitePawn = new Pawn(Piece.Side.WHITE);
-                    this.getCell(x, y).addPiece(whitePawn);
-
-                }
-
-                //Rook placement
-
-                if (y == 0 && x == 0 || y == 0 && x == 7){
-                    Piece blackRook = new Rook(Piece.Side.BLACK);
-                    this.getCell(x,y).addPiece(blackRook);
-                }
-                else if (y == 7 && x == 0 || y == 7 && x == 7){
-                    Piece whiteRook = new Rook(Piece.Side.WHITE);
-                    this.getCell(x,y).addPiece(whiteRook);
-                }
-
-                //knight placement
-                if (y == 0 && x == 1 || y == 0 && x == 6){
-                    Piece blackKnight = new Knight(Piece.Side.BLACK);
-                    this.getCell(x,y).addPiece(blackKnight);
-                }
-                else if (y == 7 && x == 1 || y == 7 && x == 6){
-                    Piece whiteKnight = new Knight(Piece.Side.WHITE);
-                    this.getCell(x,y).addPiece(whiteKnight);
-                }
-
-                //bishop placement
-                if (y == 0 && x == 2 || y == 0 && x == 5){
-                    Piece blackBishop = new Bishop(Piece.Side.BLACK);
-                    this.getCell(x,y).addPiece(blackBishop);
-                }
-                else if (y == 7 && x == 2 || y == 7 && x == 5){
-                    Piece whiteBishop = new Bishop(Piece.Side.WHITE);
-                    this.getCell(x,y).addPiece(whiteBishop);
-                }
-
-                //king placement
-                if (y == 0 && x == 3){
-                    Piece blackKing = new King(Piece.Side.BLACK);
-                    this.getCell(x,y).addPiece(blackKing);
-                }
-                else if (y == 7 && x == 3){
-                    Piece whiteKing = new King(Piece.Side.WHITE);
-                    this.getCell(x,y).addPiece(whiteKing);
-                }
-                //queen placement
-                if (y == 0 && x == 4){
-                    Piece blackQueen = new Queen(Piece.Side.BLACK);
-                    this.getCell(x,y).addPiece(blackQueen);
-                }
-                else if (y == 7 && x == 4){
-                    Piece whiteQueen= new Queen(Piece.Side.WHITE);
-                    this.getCell(x,y).addPiece(whiteQueen);
-                }
-
-
-            }
-        }
-
+    //get cell from board
+    public BoardCell getCellByCoords(Coordinates coords) {
+        return this.getCell(coords.getX(), coords.getY());
+    }
+    //check if coordinates of cases are on board
+    public boolean isOnBoard(Coordinates coords) {
+        return coords.getX() >= 0 && coords.getX() <= 7 && coords.getY() >= 0 && coords.getY() <= 7;
     }
 
+
+
+
+    public void selectionPhase(){
+        this.currentGameState = GameState.SELECTION;
+    }
+
+    public void movementPhase(){
+        this.currentGameState = GameState.MOVEMENT;
+    }
+
+
+
+
+
+
+    public void activateCells(ArrayList<Coordinates> coordinatesArrayList) {
+        for (Coordinates coord : coordinatesArrayList) {
+            this.getCellByCoords(coord).activate();
+        }
+    }
+
+    public void desactiveCells(ArrayList<Coordinates> coordinatesArrayList){
+        for (Coordinates coord : coordinatesArrayList) {
+            this.getCellByCoords(coord).unactivate();
+        }
+    }
+
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        for (ArrayList<BoardCell> line : this.cells) {
+            for (BoardCell cell : line) {
+                // cell interaction
+                if (e.getSource() == cell) {
+                    if (cell.isOccupied() && this.activePlayer.getSide() == cell.getPiece().getSide() && currentGameState == GameState.SELECTION) {
+                        this.activePlayer.selectPiece(cell.getPiece());
+                    } else if (currentGameState == GameState.MOVEMENT) {
+                       this.activePlayer.movePiece(cell);
+                    }
+                }
+            }
+        }
+    }
+
+
+    private void placePieces() {
+        for (Piece piece : pieces) {
+            BoardCell targetCell = this.getCell(piece.getPosition().getX(), piece.getPosition().getY());
+            targetCell.addPiece(piece);
+        }
+    }
 }
+
+
+
+
+
