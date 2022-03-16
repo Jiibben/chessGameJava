@@ -19,8 +19,13 @@ public class King extends Piece {
         return true;
     }
 
+    public boolean isInDanger(){
+        System.out.println(this.getSide() + " " + Coordinates.contains(this.getBoard().getDangerPiece(), this.getPosition()));
+        return Coordinates.contains(this.getBoard().getDangerPiece(), this.getPosition());
+    }
+
     @Override
     public ArrayList<Coordinates> getMovement(boolean attackRange) {
-        return null;
+        return new ArrayList<Coordinates>();
     }
 }

@@ -14,15 +14,12 @@ public class Player {
     }
 
 
-    public void hasPlayed() {
+    public void hasPlayed() {}
 
-    }
 
     private void setSelectedPiece(Piece selectedPiece) {
         this.selectedPiece = selectedPiece;
     }
-
-
 
     public void unselectPiece() {
         this.selectedPiece = null;
@@ -31,7 +28,6 @@ public class Player {
     public void selectPiece(Piece piece) {
         this.setSelectedPiece(piece);
         piece.select();
-
     }
 
     public void movePiece(BoardCell targetCell) {

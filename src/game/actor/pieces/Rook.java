@@ -19,7 +19,7 @@ public class Rook extends Piece {
     }
 
     @Override
-    public ArrayList<Coordinates> getMovement(boolean attackRange) {
+    public ArrayList<Coordinates> getMovement(boolean attackRange ) {
         return this.verticalAxesMovement();
     }
 

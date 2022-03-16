@@ -5,7 +5,7 @@ import utilities.Coordinates;
 
 import java.util.ArrayList;
 
-public class Queen extends Piece{
+public class Queen extends Piece {
     public static final String QUEEN_NAME = "queen";
 
     public Queen(Side side, Coordinates coords, Board board) {
@@ -19,11 +19,9 @@ public class Queen extends Piece{
 
     @Override
     public ArrayList<Coordinates> getMovement(boolean attackRange) {
-        ArrayList<Coordinates> movement =  diagonalAxesMovement();
+        ArrayList<Coordinates> movement = diagonalAxesMovement();
 
-        for (Coordinates a : verticalAxesMovement()){
-            movement.add(a);
-        }
+        movement.addAll(verticalAxesMovement());
         return movement;
     }
 }

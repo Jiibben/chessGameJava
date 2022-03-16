@@ -14,7 +14,7 @@ public class BoardCell extends JButton {
 
 
 
-    private Coordinates coords;
+    private final Coordinates coords;
     private Piece piece;
 
     public BoardCell(Coordinates coords){

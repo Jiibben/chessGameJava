@@ -21,11 +21,12 @@ public class Pawn extends Piece {
 
     @Override
     public ArrayList<Coordinates> getMovement(boolean attackRange) {
+
         ArrayList<Coordinates> movement = new ArrayList<>();
         int number = (this.getNumberOfPlay() == 0 ? 2 : 1);
         if (!attackRange){
         for (int i = 1; i <= number; i++) {
-            Coordinates possibility = new Coordinates(getPosition());
+            Coordinates possibility = new Coordinates(this.getPosition());
             if (this.getSide() == Side.WHITE) {
                 possibility.decrementY(i);
             } else {
@@ -39,20 +40,19 @@ public class Pawn extends Piece {
         }
         }
 
-        Coordinates eatOne = getPosition().incrementAndNew(1, 1);
-        Coordinates eatTwo = getPosition().incrementAndNew(-1, 1);
+        Coordinates eatOne = this.getPosition().incrementAndNew(1, 1);
+        Coordinates eatTwo = this.getPosition().incrementAndNew(-1, 1);
 
         if (this.getSide() == Side.WHITE) {
-            eatOne = getPosition().incrementAndNew(-1, -1);
-            eatTwo = getPosition().incrementAndNew(1, -1);
+            eatOne = this.getPosition().incrementAndNew(-1, -1);
+            eatTwo = this.getPosition().incrementAndNew(1, -1);
 
         }
-
 
         if (this.getBoard().isOnBoard(eatOne) && this.getBoard().getCellByCoords(eatOne).isOccupied() &&this.getBoard().getCellByCoords(eatOne).isOccupiedByEnemy(this)) {
             movement.add(eatOne);
         }
-        if (this.getBoard().isOnBoard(eatTwo) && this.getBoard().getCellByCoords(eatOne).isOccupied() && this.getBoard().getCellByCoords(eatTwo).isOccupiedByEnemy(this)) {
+        if (this.getBoard().isOnBoard(eatTwo) && this.getBoard().getCellByCoords(eatTwo).isOccupied() && this.getBoard().getCellByCoords(eatTwo).isOccupiedByEnemy(this)) {
             movement.add(eatTwo);
         }
         return movement;

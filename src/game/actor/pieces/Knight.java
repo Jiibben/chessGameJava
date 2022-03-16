@@ -5,7 +5,7 @@ import utilities.Coordinates;
 
 import java.util.ArrayList;
 
-public class Knight extends Piece{
+public class Knight extends Piece {
 
     public static final String KNIGHT_NAME = "knight";
 
@@ -20,12 +20,13 @@ public class Knight extends Piece{
 
     @Override
     public ArrayList<Coordinates> getMovement(boolean attackRange) {
+
         ArrayList<Coordinates> movement = new ArrayList<>();
-        Coordinates currentCoords = new Coordinates(getPosition());
-        Coordinates[] coords = {currentCoords.incrementAndNew(1, 2), currentCoords.incrementAndNew(-1, 2), currentCoords.incrementAndNew(1,-2), currentCoords.incrementAndNew(-1,-2),
-        currentCoords.incrementAndNew(2,1), currentCoords.incrementAndNew(2,-1), currentCoords.incrementAndNew(-2,-1), currentCoords.incrementAndNew(-2,1)};
-        for(Coordinates coord : coords){
-            if(this.getBoard().isOnBoard(coord) &&( !this.getBoard().getCellByCoords(coord).isOccupied() || this.getBoard().getCellByCoords(coord).isOccupiedByEnemy(this))){
+        Coordinates currentCoords = new Coordinates(this.getPosition());
+        Coordinates[] coords = {currentCoords.incrementAndNew(1, 2), currentCoords.incrementAndNew(-1, 2), currentCoords.incrementAndNew(1, -2), currentCoords.incrementAndNew(-1, -2),
+                currentCoords.incrementAndNew(2, 1), currentCoords.incrementAndNew(2, -1), currentCoords.incrementAndNew(-2, -1), currentCoords.incrementAndNew(-2, 1)};
+        for (Coordinates coord : coords) {
+            if (this.getBoard().isOnBoard(coord) && (!this.getBoard().getCellByCoords(coord).isOccupied() || this.getBoard().getCellByCoords(coord).isOccupiedByEnemy(this))) {
                 movement.add(coord);
             }
         }
