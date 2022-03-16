@@ -60,7 +60,7 @@ public class BoardCell extends JButton {
     }
 
     public boolean isOccupiedByEnemy(Piece piece){
-        return piece.getSide() != this.piece.getSide();
+        return this.piece != null && piece.getSide() != this.piece.getSide();
     }
 
     public void removePiece(){

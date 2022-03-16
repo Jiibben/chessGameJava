@@ -19,7 +19,7 @@ public class Knight extends Piece{
     }
 
     @Override
-    public ArrayList<Coordinates> getMovement() {
+    public ArrayList<Coordinates> getMovement(boolean attackRange) {
         ArrayList<Coordinates> movement = new ArrayList<>();
         Coordinates currentCoords = new Coordinates(getPosition());
         Coordinates[] coords = {currentCoords.incrementAndNew(1, 2), currentCoords.incrementAndNew(-1, 2), currentCoords.incrementAndNew(1,-2), currentCoords.incrementAndNew(-1,-2),

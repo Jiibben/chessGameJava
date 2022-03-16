@@ -11,14 +11,15 @@ public class Coordinates {
         return x;
     }
 
-    public int getY(){
+    public int getY() {
         return y;
     }
 
-    public Coordinates(Coordinates coords){
+    public Coordinates(Coordinates coords) {
         this.x = coords.getX();
         this.y = coords.getY();
     }
+
     public void setX(int x) {
         this.x = x;
     }
@@ -28,35 +29,38 @@ public class Coordinates {
     }
 
 
-    public Coordinates incrementAndNew(int x, int y){
+    public Coordinates incrementAndNew(int x, int y) {
 
         return new Coordinates(this.getX() + x, this.getY() + y);
     }
 
-    public Coordinates(){
-        this(0,0);
+    public Coordinates() {
+        this(0, 0);
     }
 
-    public Coordinates(int x, int y){
+    public Coordinates(int x, int y) {
         this.x = x;
         this.y = y;
     }
-    public void increment(Coordinates coords){
+
+    public void increment(Coordinates coords) {
         this.x += coords.getX();
         this.y += coords.getY();
     }
-    public void incrementX(int value){
+
+    public void incrementX(int value) {
         this.x += value;
     }
 
-    public void incrementY(int value){
+    public void incrementY(int value) {
         this.y += value;
     }
 
-    public void decrementY(int value){
+    public void decrementY(int value) {
         this.y -= value;
     }
-    public void decrementX(int value){
+
+    public void decrementX(int value) {
         this.x -= value;
     }
 
@@ -76,9 +80,9 @@ public class Coordinates {
                 '}';
     }
 
-    public static boolean contains(ArrayList<Coordinates> coordList, Coordinates coords){
-        for (Coordinates coord : coordList){
-            if (coord.getX() == coords.getX() && coords.getY() == coord.getY()){
+    public static boolean contains(ArrayList<Coordinates> coordList, Coordinates coords) {
+        for (Coordinates coord : coordList) {
+            if (coord.getX() == coords.getX() && coords.getY() == coord.getY()) {
                 return true;
             }
         }

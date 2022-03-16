@@ -23,9 +23,6 @@ public class Player {
     }
 
 
-    public Piece getSelectedPiece() {
-        return this.selectedPiece;
-    }
 
     public void unselectPiece() {
         this.selectedPiece = null;
@@ -42,6 +39,7 @@ public class Player {
         this.unselectPiece();
 
     }
+
 
     public Piece.Side getSide() {
         return side;

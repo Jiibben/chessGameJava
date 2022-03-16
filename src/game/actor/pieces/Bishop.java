@@ -19,7 +19,7 @@ public class Bishop extends Piece{
     }
 
     @Override
-    public ArrayList<Coordinates> getMovement() {
+    public ArrayList<Coordinates> getMovement(boolean attackRange) {
         return diagonalAxesMovement();
     }
 }

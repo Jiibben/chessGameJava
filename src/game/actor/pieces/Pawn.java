@@ -20,10 +20,10 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public ArrayList<Coordinates> getMovement() {
+    public ArrayList<Coordinates> getMovement(boolean attackRange) {
         ArrayList<Coordinates> movement = new ArrayList<>();
         int number = (this.getNumberOfPlay() == 0 ? 2 : 1);
-
+        if (!attackRange){
         for (int i = 1; i <= number; i++) {
             Coordinates possibility = new Coordinates(getPosition());
             if (this.getSide() == Side.WHITE) {
@@ -37,6 +37,8 @@ public class Pawn extends Piece {
                 break;
             }
         }
+        }
+
         Coordinates eatOne = getPosition().incrementAndNew(1, 1);
         Coordinates eatTwo = getPosition().incrementAndNew(-1, 1);
 

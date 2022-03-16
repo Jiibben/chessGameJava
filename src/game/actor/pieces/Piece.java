@@ -28,6 +28,7 @@ public abstract class Piece {
     }
 
     public abstract boolean isKing();
+
     public void hasMoved() {
         this.numberOfPlay += 1;
     }
@@ -62,7 +63,7 @@ public abstract class Piece {
     }
 
     public void move(BoardCell targetCell) {
-        ArrayList<Coordinates> movement = this.getMovement();
+        ArrayList<Coordinates> movement = this.getMovement(false);
         if (!movement.isEmpty() && Coordinates.contains(movement, targetCell.getCoords())) {
             this.board.desactiveCells(movement);
             this.removeFromCell();
@@ -74,10 +75,10 @@ public abstract class Piece {
         board.selectionPhase();
     }
 
-    public void select(){
-        ArrayList<Coordinates> movement = this.getMovement();
-        if (!movement.isEmpty()){
-            this.board.activateCells(this.getMovement());
+    public void select() {
+        ArrayList<Coordinates> movement = this.getMovement(false);
+        if (!movement.isEmpty()) {
+            this.board.activateCells(this.getMovement(false));
             this.board.movementPhase();
 
         }
@@ -87,9 +88,7 @@ public abstract class Piece {
         return side;
     }
 
-    public abstract ArrayList<Coordinates> getMovement();
-
-
+    public abstract ArrayList<Coordinates> getMovement(boolean attackRange);
 
 
     protected ArrayList<Coordinates> verticalAxesMovement() {
@@ -100,7 +99,7 @@ public abstract class Piece {
             if (this.getBoard().isOnBoard(possibility) && !this.getBoard().getCellByCoords(possibility).isOccupied()) {
                 movement.add(possibility);
             } else {
-                if (this.getBoard().isOnBoard(possibility) && this.getBoard().getCellByCoords(possibility).isOccupiedByEnemy(this)){
+                if (this.getBoard().isOnBoard(possibility) && this.getBoard().getCellByCoords(possibility).isOccupiedByEnemy(this)) {
                     movement.add(possibility);
                 }
                 break;
@@ -112,7 +111,7 @@ public abstract class Piece {
             if (this.getBoard().isOnBoard(possibility) && !this.getBoard().getCellByCoords(possibility).isOccupied()) {
                 movement.add(possibility);
             } else {
-                if (this.getBoard().isOnBoard(possibility) && this.getBoard().getCellByCoords(possibility).isOccupiedByEnemy(this)){
+                if (this.getBoard().isOnBoard(possibility) && this.getBoard().getCellByCoords(possibility).isOccupiedByEnemy(this)) {
                     movement.add(possibility);
                 }
                 break;
@@ -124,7 +123,7 @@ public abstract class Piece {
             if (this.getBoard().isOnBoard(possibility) && !this.getBoard().getCellByCoords(possibility).isOccupied()) {
                 movement.add(possibility);
             } else {
-                if (this.getBoard().isOnBoard(possibility) && this.getBoard().getCellByCoords(possibility).isOccupiedByEnemy(this)){
+                if (this.getBoard().isOnBoard(possibility) && this.getBoard().getCellByCoords(possibility).isOccupiedByEnemy(this)) {
                     movement.add(possibility);
                 }
                 break;
@@ -136,7 +135,7 @@ public abstract class Piece {
             if (this.getBoard().isOnBoard(possibility) && !this.getBoard().getCellByCoords(possibility).isOccupied()) {
                 movement.add(possibility);
             } else {
-                if (this.getBoard().isOnBoard(possibility) && this.getBoard().getCellByCoords(possibility).isOccupiedByEnemy(this)){
+                if (this.getBoard().isOnBoard(possibility) && this.getBoard().getCellByCoords(possibility).isOccupiedByEnemy(this)) {
                     movement.add(possibility);
                 }
                 break;
@@ -155,7 +154,7 @@ public abstract class Piece {
             if (this.getBoard().isOnBoard(possibility) && !this.getBoard().getCellByCoords(possibility).isOccupied()) {
                 movement.add(possibility);
             } else {
-                if (this.getBoard().isOnBoard(possibility) && this.getBoard().getCellByCoords(possibility).isOccupiedByEnemy(this)){
+                if (this.getBoard().isOnBoard(possibility) && this.getBoard().getCellByCoords(possibility).isOccupiedByEnemy(this)) {
                     movement.add(possibility);
                 }
                 break;
@@ -168,7 +167,7 @@ public abstract class Piece {
             if (this.getBoard().isOnBoard(possibility) && !this.getBoard().getCellByCoords(possibility).isOccupied()) {
                 movement.add(possibility);
             } else {
-                if (this.getBoard().isOnBoard(possibility) && this.getBoard().getCellByCoords(possibility).isOccupiedByEnemy(this)){
+                if (this.getBoard().isOnBoard(possibility) && this.getBoard().getCellByCoords(possibility).isOccupiedByEnemy(this)) {
                     movement.add(possibility);
                 }
                 break;
@@ -181,7 +180,7 @@ public abstract class Piece {
             if (this.getBoard().isOnBoard(possibility) && !this.getBoard().getCellByCoords(possibility).isOccupied()) {
                 movement.add(possibility);
             } else {
-                if (this.getBoard().isOnBoard(possibility) && this.getBoard().getCellByCoords(possibility).isOccupiedByEnemy(this)){
+                if (this.getBoard().isOnBoard(possibility) && this.getBoard().getCellByCoords(possibility).isOccupiedByEnemy(this)) {
                     movement.add(possibility);
                 }
                 break;
@@ -194,7 +193,7 @@ public abstract class Piece {
             if (this.getBoard().isOnBoard(possibility) && !this.getBoard().getCellByCoords(possibility).isOccupied()) {
                 movement.add(possibility);
             } else {
-                if (this.getBoard().isOnBoard(possibility) && this.getBoard().getCellByCoords(possibility).isOccupiedByEnemy(this)){
+                if (this.getBoard().isOnBoard(possibility) && this.getBoard().getCellByCoords(possibility).isOccupiedByEnemy(this)) {
                     movement.add(possibility);
                 }
                 break;

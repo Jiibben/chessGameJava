@@ -52,6 +52,17 @@ public class Board extends JPanel implements ActionListener {
         this.setVisible(true);
     }
 
+    public ArrayList<Coordinates> getDangerPiece(Piece.Side side){
+        ArrayList<Coordinates> dangerPoint = new ArrayList<>();
+        for (Piece i : pieces){
+            if (i.getSide() != side){
+                dangerPoint.addAll(i.getMovement(true));
+
+            }
+        }
+        return dangerPoint;
+    }
+
     //get cell from board
     public BoardCell getCell(int x, int y) {
         return this.cells.get(y).get(x);
@@ -61,25 +72,20 @@ public class Board extends JPanel implements ActionListener {
     public BoardCell getCellByCoords(Coordinates coords) {
         return this.getCell(coords.getX(), coords.getY());
     }
+
     //check if coordinates of cases are on board
     public boolean isOnBoard(Coordinates coords) {
         return coords.getX() >= 0 && coords.getX() <= 7 && coords.getY() >= 0 && coords.getY() <= 7;
     }
 
 
-
-
-    public void selectionPhase(){
+    public void selectionPhase() {
         this.currentGameState = GameState.SELECTION;
     }
 
-    public void movementPhase(){
+    public void movementPhase() {
         this.currentGameState = GameState.MOVEMENT;
     }
-
-
-
-
 
 
     public void activateCells(ArrayList<Coordinates> coordinatesArrayList) {
@@ -88,7 +94,7 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    public void desactiveCells(ArrayList<Coordinates> coordinatesArrayList){
+    public void desactiveCells(ArrayList<Coordinates> coordinatesArrayList) {
         for (Coordinates coord : coordinatesArrayList) {
             this.getCellByCoords(coord).unactivate();
         }
@@ -104,7 +110,7 @@ public class Board extends JPanel implements ActionListener {
                     if (cell.isOccupied() && this.activePlayer.getSide() == cell.getPiece().getSide() && currentGameState == GameState.SELECTION) {
                         this.activePlayer.selectPiece(cell.getPiece());
                     } else if (currentGameState == GameState.MOVEMENT) {
-                       this.activePlayer.movePiece(cell);
+                        this.activePlayer.movePiece(cell);
                     }
                 }
             }
