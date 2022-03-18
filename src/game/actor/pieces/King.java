@@ -20,7 +20,7 @@ public class King extends Piece {
     }
 
     public boolean isInDanger(){
-        System.out.println(this.getSide() + " " + Coordinates.contains(this.getBoard().getDangerPiece(), this.getPosition()));
+        //System.out.println(this.getSide() + " " + Coordinates.contains(this.getBoard().getDangerPiece(), this.getPosition()));
         return Coordinates.contains(this.getBoard().getDangerPiece(), this.getPosition());
     }
 

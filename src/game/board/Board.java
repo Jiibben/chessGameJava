@@ -90,12 +90,11 @@ public class Board extends JPanel implements ActionListener {
     public ArrayList<Coordinates> getDangerPiece() {
         ArrayList<Coordinates> dangerPoint = new ArrayList<>();
         for (Piece i : pieces) {
-            if (i.getSide() != this.activePlayer.getSide()) {
+            if (i.getSide() != this.activePlayer.getSide() && i.isAlive()) {
 
                 dangerPoint.addAll(i.getMovement(false));
             }
         }
-        System.out.println(dangerPoint);
         return dangerPoint;
     }
 

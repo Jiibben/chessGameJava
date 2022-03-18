@@ -6,7 +6,8 @@ import game.board.BoardCell;
 import utilities.Coordinates;
 
 import javax.swing.*;
-import javax.swing.text.Position;
+
+
 import java.util.ArrayList;
 
 public abstract class Piece {
@@ -14,13 +15,25 @@ public abstract class Piece {
     private final Side side;
     private final String name;
     private Coordinates position;
-
-
     private int numberOfPlay = 0;
     private final Board board;
+    private boolean alive = true;
 
     public static enum Side {
         BLACK, WHITE;
+    }
+
+
+    public boolean isAlive() {
+        return this.alive;
+    }
+
+    public void kill() {
+        this.alive = false;
+    }
+
+    public void revive() {
+        this.alive = true;
     }
 
     public Piece(Side side, String name, Coordinates position, Board board) {
@@ -50,14 +63,31 @@ public abstract class Piece {
 
     private boolean checkPosition(Coordinates newCoords) {
         Coordinates previousCoords = this.getPosition();
-        this.removeFromCell();
+        Piece targetCellOccupent = this.getBoard().getCellByCoords(newCoords).getPiece();
+        boolean needToKill = (targetCellOccupent != null && targetCellOccupent.getSide() != this.side) ;
 
+        System.out.println(needToKill + " " + newCoords);
+        this.removeFromCell();
         this.changePosition(newCoords);
+        if (needToKill){
+            targetCellOccupent.kill();
+            System.out.println(targetCellOccupent.isAlive());
+
+        }
         if (this.getBoard().getKing(this.getSide()).isInDanger()) {
             this.changePosition(previousCoords);
             this.getBoard().getCellByCoords(this.getPosition()).addPiece(this);
+            if (needToKill){
+                targetCellOccupent.revive();
+                System.out.println(targetCellOccupent.isAlive());
 
+            }
             return false;
+        }
+        if (needToKill){
+            targetCellOccupent.revive();
+            System.out.println(targetCellOccupent.isAlive());
+
         }
         this.changePosition(previousCoords);
         this.getBoard().getCellByCoords(this.getPosition()).addPiece(this);

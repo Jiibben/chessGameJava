@@ -1,9 +1,8 @@
 package game.actor.players;
 
 import game.actor.pieces.Piece;
-import game.board.Board;
+
 import game.board.BoardCell;
-import utilities.Coordinates;
 
 public class Player {
     private final Piece.Side side;
