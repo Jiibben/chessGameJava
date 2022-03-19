@@ -6,6 +6,6 @@ The game is complete with all the standard chess rules
 
 ## Pictures :
 
-![chessGame1](/home/allanburnier/Pictures/chessGame1.png)
+![chessGame1](chessGameJava/chessGame1.png)
 
-![chessGame2](/home/allanburnier/Pictures/chessGame2.png)
+![chessGame2](chessGameJava/chessGame2.png)
