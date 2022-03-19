@@ -33,17 +33,18 @@ public class DeadIcon extends JButton {
 
 
     }
-    private void setIcons(Piece piece){
+
+    private void setIcons(Piece piece) {
         this.setIcon(piece.getDeadSprite());
         this.setDisabledIcon(piece.getDeadSprite());
     }
-    public void addPiece(Piece piece) {
-        // set the icon for disabled and normal mode
-        setIcons(piece);
-        this.piece = piece;
-    }
 
-    public Piece getPiece() {
-        return piece;
+
+    public void restart() {
+        this.setSize(100, 100);
+        this.setEnabled(false);
+        this.setIcon(new ImageIcon("res/deadPiece/placeHolder.png"));
+        this.setDisabledIcon(new ImageIcon("res/deadPiece/placeHolder.png"));
+        this.piece = null;
     }
 }

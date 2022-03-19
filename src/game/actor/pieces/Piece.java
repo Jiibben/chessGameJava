@@ -28,7 +28,9 @@ public abstract class Piece {
     public void kill() {
         this.deactivate();
         this.removeFromCell();
+        this.getBoard().removePieceFromList(this);
         this.getBoard().addToScoreBoard(this);
+
     }
 
     public boolean isActive() {
@@ -226,6 +228,8 @@ public abstract class Piece {
 
         return movement;
     }
+
+
 
     protected ArrayList<Coordinates> diagonalAxesMovement() {
 

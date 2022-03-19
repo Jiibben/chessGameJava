@@ -39,6 +39,15 @@ public class ScoreBoard extends JPanel{
     }
 
 
+    public void reset(){
+        this.deadPiece.clear();
+        for (DeadIcon a : buttonsPiece){
+            a.restart();
+
+        }
+    }
+
+
 
 
 

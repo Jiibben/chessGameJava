@@ -20,39 +20,7 @@ public class Board extends JPanel implements ActionListener {
     //cell of board
     private final ArrayList<ArrayList<BoardCell>> cells = new ArrayList<>(NUMBEROFROW);
     //pieces on board
-    private final ArrayList<Piece> pieces = new ArrayList<>(Arrays.asList(
-            new King(Piece.Side.BLACK, new Coordinates(4, 0), this),
-            new King(Piece.Side.WHITE, new Coordinates(4, 7), this),
-            new Rook(Piece.Side.BLACK, new Coordinates(0, 0), this),
-            new Rook(Piece.Side.BLACK, new Coordinates(7, 0), this),
-            new Knight(Piece.Side.BLACK, new Coordinates(1, 0), this),
-            new Knight(Piece.Side.BLACK, new Coordinates(6, 0), this),
-            new Bishop(Piece.Side.BLACK, new Coordinates(2, 0), this),
-            new Bishop(Piece.Side.BLACK, new Coordinates(5, 0), this),
-            new Queen(Piece.Side.BLACK, new Coordinates(3, 0), this),
-            new Pawn(Piece.Side.BLACK, new Coordinates(0, 1), this),
-            new Pawn(Piece.Side.BLACK, new Coordinates(1, 1), this),
-            new Pawn(Piece.Side.BLACK, new Coordinates(2, 1), this),
-            new Pawn(Piece.Side.BLACK, new Coordinates(3, 1), this),
-            new Pawn(Piece.Side.BLACK, new Coordinates(4, 1), this),
-            new Pawn(Piece.Side.BLACK, new Coordinates(5, 1), this),
-            new Pawn(Piece.Side.BLACK, new Coordinates(6, 1), this),
-            new Pawn(Piece.Side.BLACK, new Coordinates(7, 1), this),
-            new Rook(Piece.Side.WHITE, new Coordinates(0, 7), this),
-            new Rook(Piece.Side.WHITE, new Coordinates(7, 7), this),
-            new Knight(Piece.Side.WHITE, new Coordinates(1, 7), this),
-            new Knight(Piece.Side.WHITE, new Coordinates(6, 7), this),
-            new Bishop(Piece.Side.WHITE, new Coordinates(2, 7), this),
-            new Bishop(Piece.Side.WHITE, new Coordinates(5, 7), this),
-            new Queen(Piece.Side.WHITE, new Coordinates(3, 7), this),
-            new Pawn(Piece.Side.WHITE, new Coordinates(0, 6), this),
-            new Pawn(Piece.Side.WHITE, new Coordinates(1, 6), this),
-            new Pawn(Piece.Side.WHITE, new Coordinates(2, 6), this),
-            new Pawn(Piece.Side.WHITE, new Coordinates(3, 6), this),
-            new Pawn(Piece.Side.WHITE, new Coordinates(4, 6), this),
-            new Pawn(Piece.Side.WHITE, new Coordinates(5, 6), this),
-            new Pawn(Piece.Side.WHITE, new Coordinates(6, 6), this),
-            new Pawn(Piece.Side.WHITE, new Coordinates(7, 6), this)));
+    private ArrayList<Piece> pieces;
 
     //players
     private final Player whitePlayer;
@@ -65,8 +33,6 @@ public class Board extends JPanel implements ActionListener {
 
         SELECTION, MOVEMENT, END
     }
-
-
 
 
     private GameState currentGameState = GameState.SELECTION;
@@ -100,6 +66,7 @@ public class Board extends JPanel implements ActionListener {
         this.setVisible(true);
     }
 
+
     public ArrayList<Coordinates> getDangerPos(Piece.Side allySide) {
         ArrayList<Coordinates> dangerousPositions = new ArrayList<>();
         for (Piece i : pieces) {
@@ -111,13 +78,16 @@ public class Board extends JPanel implements ActionListener {
     }
 
     public void addToScoreBoard(Piece piece) {
-        System.out.println(piece.getSide());
         if (piece.getSide() == Piece.Side.WHITE) {
             this.blackPlayer.getSb().addPiece(piece);
         } else {
             this.whitePlayer.getSb().addPiece(piece);
 
         }
+    }
+
+    public void removePieceFromList(Piece piece) {
+        pieces.remove(piece);
     }
 
     public King getKing(Piece.Side side) {
@@ -214,6 +184,12 @@ public class Board extends JPanel implements ActionListener {
             this.currentGameState = GameState.END;
             JOptionPane.showMessageDialog(getParent(), activePlayer.getSide() + " wins");
             this.killAllCells();
+            int input = JOptionPane.showConfirmDialog(this, "Do you want to play again ?", "Play Again.",
+                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+            switch (input) {
+                case 0 -> this.restart();
+                case 1, 2 -> System.exit(0);
+            }
         } else if (checkDraw()) {
             this.killAllCells();
             this.currentGameState = GameState.END;
@@ -291,11 +267,54 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
+    private void restart() {
+        this.whitePlayer.getSb().reset();
+        this.blackPlayer.getSb().reset();
+        this.activePlayer = whitePlayer;
+        this.inactivePlayer = blackPlayer;
+        this.enableAllCell();
+        this.placePieces();
+    }
+
 
     private void placePieces() {
+        this.pieces = new ArrayList<>(Arrays.asList(
+                new King(Piece.Side.BLACK, new Coordinates(4, 0), this),
+                new King(Piece.Side.WHITE, new Coordinates(4, 7), this),
+                new Rook(Piece.Side.BLACK, new Coordinates(0, 0), this),
+                new Rook(Piece.Side.BLACK, new Coordinates(7, 0), this),
+                new Knight(Piece.Side.BLACK, new Coordinates(1, 0), this),
+                new Knight(Piece.Side.BLACK, new Coordinates(6, 0), this),
+                new Bishop(Piece.Side.BLACK, new Coordinates(2, 0), this),
+                new Bishop(Piece.Side.BLACK, new Coordinates(5, 0), this),
+                new Queen(Piece.Side.BLACK, new Coordinates(3, 0), this),
+                new Pawn(Piece.Side.BLACK, new Coordinates(0, 1), this),
+                new Pawn(Piece.Side.BLACK, new Coordinates(1, 1), this),
+                new Pawn(Piece.Side.BLACK, new Coordinates(2, 1), this),
+                new Pawn(Piece.Side.BLACK, new Coordinates(3, 1), this),
+                new Pawn(Piece.Side.BLACK, new Coordinates(4, 1), this),
+                new Pawn(Piece.Side.BLACK, new Coordinates(5, 1), this),
+                new Pawn(Piece.Side.BLACK, new Coordinates(6, 1), this),
+                new Pawn(Piece.Side.BLACK, new Coordinates(7, 1), this),
+                new Rook(Piece.Side.WHITE, new Coordinates(0, 7), this),
+                new Rook(Piece.Side.WHITE, new Coordinates(7, 7), this),
+                new Knight(Piece.Side.WHITE, new Coordinates(1, 7), this),
+                new Knight(Piece.Side.WHITE, new Coordinates(6, 7), this),
+                new Bishop(Piece.Side.WHITE, new Coordinates(2, 7), this),
+                new Bishop(Piece.Side.WHITE, new Coordinates(5, 7), this),
+                new Queen(Piece.Side.WHITE, new Coordinates(3, 7), this),
+                new Pawn(Piece.Side.WHITE, new Coordinates(0, 6), this),
+                new Pawn(Piece.Side.WHITE, new Coordinates(1, 6), this),
+                new Pawn(Piece.Side.WHITE, new Coordinates(2, 6), this),
+                new Pawn(Piece.Side.WHITE, new Coordinates(3, 6), this),
+                new Pawn(Piece.Side.WHITE, new Coordinates(4, 6), this),
+                new Pawn(Piece.Side.WHITE, new Coordinates(5, 6), this),
+                new Pawn(Piece.Side.WHITE, new Coordinates(6, 6), this),
+                new Pawn(Piece.Side.WHITE, new Coordinates(7, 6), this)));
         for (Piece piece : pieces) {
             BoardCell targetCell = this.getCell(piece.getPosition().getX(), piece.getPosition().getY());
             targetCell.addPiece(piece);
+
         }
     }
 }
