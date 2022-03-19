@@ -3,11 +3,13 @@ package game.actor.pieces;
 
 import game.board.Board;
 import game.board.BoardCell;
+import jdk.swing.interop.SwingInterOpUtils;
 import utilities.Coordinates;
 
 import javax.swing.*;
 
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 public abstract class Piece {
@@ -17,23 +19,27 @@ public abstract class Piece {
     private Coordinates position;
     private int numberOfPlay = 0;
     private final Board board;
-    private boolean alive = true;
+    private boolean active = true;
 
     public static enum Side {
         BLACK, WHITE;
     }
-
-
-    public boolean isAlive() {
-        return this.alive;
+    public void kill(){
+        this.deactivate();
+        this.removeFromCell();
+        this.getBoard().addToScoreBoard(this);
     }
 
-    public void kill() {
-        this.alive = false;
+    public boolean isActive() {
+        return this.active;
     }
 
-    public void revive() {
-        this.alive = true;
+    public void deactivate() {
+        this.active = false;
+    }
+
+    public void activate() {
+        this.active = true;
     }
 
     public Piece(Side side, String name, Coordinates position, Board board) {
@@ -61,40 +67,41 @@ public abstract class Piece {
         this.position = newCoords;
     }
 
-    private boolean checkPosition(Coordinates newCoords) {
-        Coordinates previousCoords = this.getPosition();
-        Piece targetCellOccupent = this.getBoard().getCellByCoords(newCoords).getPiece();
-        boolean needToKill = (targetCellOccupent != null && targetCellOccupent.getSide() != this.side) ;
 
-        System.out.println(needToKill + " " + newCoords);
+    public boolean checkIfMoveSafe(Coordinates targetPos) {
+        Coordinates cachedPos = this.getPosition();
+
+
+        BoardCell targetCell = this.getBoard().getCellByCoords(targetPos);
+        Piece targetPiece = targetCell.getPiece();
+
+
+        boolean occupancyTargetCell = targetCell.isOccupied();
+        if (occupancyTargetCell){
+            targetPiece.deactivate();
+        }
         this.removeFromCell();
-        this.changePosition(newCoords);
-        if (needToKill){
-            targetCellOccupent.kill();
-            System.out.println(targetCellOccupent.isAlive());
+        this.position = targetPos;
+        this.addToCell();
+
+        //check if king is safe
+        boolean isKingSafe = this.getBoard().getKing(this.getSide()).isSafe();
+
+        this.removeFromCell();
+        if (occupancyTargetCell) {
+            targetCell.addPiece(targetPiece);
+            targetPiece.activate();
 
         }
-        if (this.getBoard().getKing(this.getSide()).isInDanger()) {
-            this.changePosition(previousCoords);
-            this.getBoard().getCellByCoords(this.getPosition()).addPiece(this);
-            if (needToKill){
-                targetCellOccupent.revive();
-                System.out.println(targetCellOccupent.isAlive());
+        this.position = cachedPos;
 
-            }
-            return false;
-        }
-        if (needToKill){
-            targetCellOccupent.revive();
-            System.out.println(targetCellOccupent.isAlive());
-
-        }
-        this.changePosition(previousCoords);
-        this.getBoard().getCellByCoords(this.getPosition()).addPiece(this);
-        return true;
-
+        this.addToCell();
+        return isKingSafe;
     }
 
+    private void addToCell() {
+        this.getBoard().getCellByCoords(this.getPosition()).addPiece(this);
+    }
 
     public void removeFromCell() {
         this.board.getCellByCoords(this.getPosition()).removePiece();
@@ -104,6 +111,11 @@ public abstract class Piece {
         return new ImageIcon("res/" + this.name + ((Side.BLACK == this.side) ? "Black" : "White") + ".png");
     }
 
+    /**
+     * get position of current piece
+     *
+     * @return coordinates
+     */
     public Coordinates getPosition() {
         return this.position;
     }
@@ -114,7 +126,12 @@ public abstract class Piece {
 
     public void move(BoardCell targetCell) {
         ArrayList<Coordinates> movement = this.getMovement(false);
+        movement.removeIf(a -> !checkIfMoveSafe(a));
+
         if (!movement.isEmpty() && Coordinates.contains(movement, targetCell.getCoords())) {
+            if (targetCell.isOccupied() && targetCell.getPiece().getSide() != this.getSide()){
+                targetCell.getPiece().kill();
+            }
             this.board.desactiveCells(movement);
             this.removeFromCell();
             targetCell.addPiece(this);
@@ -127,11 +144,11 @@ public abstract class Piece {
 
     public void select() {
         ArrayList<Coordinates> movement = this.getMovement(false);
-        movement.removeIf(a -> !checkPosition(a));
-        if (!movement.isEmpty()) {
-            this.board.activateCells(this.getMovement(false));
-            this.board.movementPhase();
+        movement.removeIf(a -> !checkIfMoveSafe(a));
 
+        if (!movement.isEmpty()) {
+            this.board.activateCells(movement);
+            this.board.movementPhase();
         }
     }
 
@@ -142,6 +159,7 @@ public abstract class Piece {
     public abstract ArrayList<Coordinates> getMovement(boolean attackRange);
 
 
+    // movement handling
     protected boolean validateAndAdd(ArrayList<Coordinates> movement, Coordinates possibility) {
         if (this.getBoard().isOnBoard(possibility) && !this.getBoard().getCellByCoords(possibility).isOccupied()) {
             movement.add(possibility);
@@ -188,6 +206,7 @@ public abstract class Piece {
                 break;
             }
         }
+
         return movement;
     }
 
@@ -226,9 +245,7 @@ public abstract class Piece {
                 break;
             }
         }
-
         return movement;
-
     }
 
 

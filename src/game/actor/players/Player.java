@@ -2,19 +2,22 @@ package game.actor.players;
 
 import game.actor.pieces.Piece;
 
+import game.actor.score.ScoreBoard;
 import game.board.BoardCell;
 
 public class Player {
     private final Piece.Side side;
     private Piece selectedPiece;
+    private final ScoreBoard sb;
 
-    public Player(Piece.Side side) {
+    public Player(Piece.Side side, ScoreBoard sb) {
         this.side = side;
+        this.sb = sb;
     }
 
-
-    public void hasPlayed() {}
-
+    public ScoreBoard getSb() {
+        return sb;
+    }
 
     private void setSelectedPiece(Piece selectedPiece) {
         this.selectedPiece = selectedPiece;

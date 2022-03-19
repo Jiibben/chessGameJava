@@ -20,7 +20,6 @@ public class Queen extends Piece {
     @Override
     public ArrayList<Coordinates> getMovement(boolean attackRange) {
         ArrayList<Coordinates> movement = diagonalAxesMovement();
-
         movement.addAll(verticalAxesMovement());
         return movement;
     }

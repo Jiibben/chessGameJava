@@ -19,12 +19,17 @@ public class Pawn extends Piece {
         return false;
     }
 
+
     @Override
     public ArrayList<Coordinates> getMovement(boolean attackRange) {
 
         ArrayList<Coordinates> movement = new ArrayList<>();
+        //check how many times that pawn was played
         int number = (this.getNumberOfPlay() == 0 ? 2 : 1);
+
+        //check if it's an attack range mode
         if (!attackRange){
+
         for (int i = 1; i <= number; i++) {
             Coordinates possibility = new Coordinates(this.getPosition());
             if (this.getSide() == Side.WHITE) {

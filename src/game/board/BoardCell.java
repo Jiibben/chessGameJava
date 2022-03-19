@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class BoardCell extends JButton {
+
+    // styling of cell
     public static final Color BORDER_COLOR = new Color(161, 234, 177);
     public static final Color TILE_ONE_BG = Color.GRAY;
     public static final Color TILE_TWO_BG = Color.DARK_GRAY;

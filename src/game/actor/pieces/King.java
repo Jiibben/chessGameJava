@@ -19,9 +19,9 @@ public class King extends Piece {
         return true;
     }
 
-    public boolean isInDanger(){
-        //System.out.println(this.getSide() + " " + Coordinates.contains(this.getBoard().getDangerPiece(), this.getPosition()));
-        return Coordinates.contains(this.getBoard().getDangerPiece(), this.getPosition());
+
+    public boolean isSafe(){
+        return !Coordinates.contains(this.getBoard().getDangerPos(this.getSide()), this.getPosition());
     }
 
     @Override

@@ -2,6 +2,7 @@ package game.board;
 
 import game.actor.pieces.*;
 import game.actor.players.Player;
+import game.actor.score.ScoreBoard;
 import utilities.Coordinates;
 
 import javax.swing.*;
@@ -53,23 +54,30 @@ public class Board extends JPanel implements ActionListener {
     };
 
     //players
-    private final Player whitePlayer = new Player(Piece.Side.WHITE);
-    private final Player blackPlayer = new Player(Piece.Side.BLACK);
-    private Player activePlayer = whitePlayer;
-    private Player inactivePlayer = blackPlayer;
+    private final Player whitePlayer;
+    private final Player blackPlayer;
+    private Player activePlayer;
+    private Player inactivePlayer;
 
     //state handling
     public enum GameState {
+
         SELECTION, MOVEMENT
     }
 
 
     private GameState currentGameState = GameState.SELECTION;
 
-    public Board() {
+    public Board(ScoreBoard whiteScoreBoard, ScoreBoard blackScoreBoard) {
+        this.whitePlayer = new Player(Piece.Side.WHITE, whiteScoreBoard);
+        this.blackPlayer = new Player(Piece.Side.BLACK, blackScoreBoard);
+        this.activePlayer = this.whitePlayer;
+        this.inactivePlayer = blackPlayer;
+
         //layout handler
         this.setLayout(new GridLayout(NUMBEROFROW, NUMBEROFCOL));
         //adding every cell
+        this.setBackground(ScoreBoard.BG_SCOREBOARD);
         for (int y = 0; y < NUMBEROFROW; y++) {
             ArrayList<BoardCell> line = new ArrayList<>();
             for (int x = 0; x < NUMBEROFCOL; x++) {
@@ -87,19 +95,23 @@ public class Board extends JPanel implements ActionListener {
         this.setVisible(true);
     }
 
-    public ArrayList<Coordinates> getDangerPiece() {
-        ArrayList<Coordinates> dangerPoint = new ArrayList<>();
+    public ArrayList<Coordinates> getDangerPos(Piece.Side allySide) {
+        ArrayList<Coordinates> dangerousPositions = new ArrayList<>();
         for (Piece i : pieces) {
-            if (i.getSide() != this.activePlayer.getSide() && i.isAlive()) {
-
-                dangerPoint.addAll(i.getMovement(false));
+            if (i.getSide() != allySide && i.isActive()) {
+                dangerousPositions.addAll(i.getMovement(false));
             }
         }
-        return dangerPoint;
+        return dangerousPositions;
     }
 
-
-
+    public void addToScoreBoard(Piece piece) {
+        if (piece.getSide() == Piece.Side.WHITE) {
+            this.blackPlayer.getSb().addPiece(piece);
+        }else{
+            this.whitePlayer.getSb().addPiece(piece);
+        }
+    }
 
     public King getKing(Piece.Side side) {
         for (Piece piece : pieces) {
@@ -158,12 +170,17 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
+
+    /**
+     * highlights all cells matching the coordinates given
+     *
+     * @param coordinatesArrayList coordinates list of cells to highlight
+     */
     public void desactiveCells(ArrayList<Coordinates> coordinatesArrayList) {
         for (Coordinates coord : coordinatesArrayList) {
             this.getCellByCoords(coord).unactivate();
         }
     }
-
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -171,6 +188,8 @@ public class Board extends JPanel implements ActionListener {
             for (BoardCell cell : line) {
                 // cell interaction
                 if (e.getSource() == cell) {
+                    // check if the clicked cell is occupied and if it's in the same side of the current player
+                    // also check if it's in game selection mode
                     if (cell.isOccupied() && this.activePlayer.getSide() == cell.getPiece().getSide() && currentGameState == GameState.SELECTION) {
                         this.activePlayer.selectPiece(cell.getPiece());
                     } else if (currentGameState == GameState.MOVEMENT) {
