@@ -24,7 +24,8 @@ public abstract class Piece {
     public static enum Side {
         BLACK, WHITE;
     }
-    public void kill(){
+
+    public void kill() {
         this.deactivate();
         this.removeFromCell();
         this.getBoard().addToScoreBoard(this);
@@ -67,6 +68,11 @@ public abstract class Piece {
         this.position = newCoords;
     }
 
+    public boolean canMove() {
+        ArrayList<Coordinates> movement = this.getMovement(false);
+        movement.removeIf(a -> !checkIfMoveSafe(a));
+        return !movement.isEmpty();
+    }
 
     public boolean checkIfMoveSafe(Coordinates targetPos) {
         Coordinates cachedPos = this.getPosition();
@@ -77,7 +83,7 @@ public abstract class Piece {
 
 
         boolean occupancyTargetCell = targetCell.isOccupied();
-        if (occupancyTargetCell){
+        if (occupancyTargetCell) {
             targetPiece.deactivate();
         }
         this.removeFromCell();
@@ -99,7 +105,7 @@ public abstract class Piece {
         return isKingSafe;
     }
 
-    private void addToCell() {
+    public void addToCell() {
         this.getBoard().getCellByCoords(this.getPosition()).addPiece(this);
     }
 
@@ -109,6 +115,10 @@ public abstract class Piece {
 
     public ImageIcon getSprite() {
         return new ImageIcon("res/" + this.name + ((Side.BLACK == this.side) ? "Black" : "White") + ".png");
+    }
+
+    public ImageIcon getDeadSprite() {
+        return new ImageIcon("res/deadPiece/" + this.name + ((Side.BLACK == this.side) ? "Black" : "White") + ".png");
     }
 
     /**
@@ -129,14 +139,21 @@ public abstract class Piece {
         movement.removeIf(a -> !checkIfMoveSafe(a));
 
         if (!movement.isEmpty() && Coordinates.contains(movement, targetCell.getCoords())) {
-            if (targetCell.isOccupied() && targetCell.getPiece().getSide() != this.getSide()){
+            if (targetCell.isOccupied() && targetCell.getPiece().getSide() != this.getSide()) {
                 targetCell.getPiece().kill();
             }
             this.board.desactiveCells(movement);
             this.removeFromCell();
             targetCell.addPiece(this);
             this.hasMoved();
+
+            if ((this.getName().equals("pawn") && this.getSide() == Side.BLACK && this.getPosition().getY() == (Board.NUMBEROFROW - 1)) || (this.getName().equals("pawn") && this.getSide() == Side.WHITE && this.getPosition().getY() == 0)) {
+                this.getBoard().swap(this);
+            }
+
+
             board.nextRound();
+
         }
         this.board.desactiveCells(movement);
         board.selectionPhase();

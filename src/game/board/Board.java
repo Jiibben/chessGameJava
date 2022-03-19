@@ -3,6 +3,7 @@ package game.board;
 import game.actor.pieces.*;
 import game.actor.players.Player;
 import game.actor.score.ScoreBoard;
+import game.chessGame;
 import utilities.Coordinates;
 
 import javax.swing.*;
@@ -10,6 +11,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Board extends JPanel implements ActionListener {
     //settings
@@ -18,7 +20,7 @@ public class Board extends JPanel implements ActionListener {
     //cell of board
     private final ArrayList<ArrayList<BoardCell>> cells = new ArrayList<>(NUMBEROFROW);
     //pieces on board
-    private final Piece[] pieces = {
+    private final ArrayList<Piece> pieces = new ArrayList<>(Arrays.asList(
             new King(Piece.Side.BLACK, new Coordinates(4, 0), this),
             new King(Piece.Side.WHITE, new Coordinates(4, 7), this),
             new Rook(Piece.Side.BLACK, new Coordinates(0, 0), this),
@@ -50,8 +52,7 @@ public class Board extends JPanel implements ActionListener {
             new Pawn(Piece.Side.WHITE, new Coordinates(4, 6), this),
             new Pawn(Piece.Side.WHITE, new Coordinates(5, 6), this),
             new Pawn(Piece.Side.WHITE, new Coordinates(6, 6), this),
-            new Pawn(Piece.Side.WHITE, new Coordinates(7, 6), this)
-    };
+            new Pawn(Piece.Side.WHITE, new Coordinates(7, 6), this)));
 
     //players
     private final Player whitePlayer;
@@ -62,17 +63,21 @@ public class Board extends JPanel implements ActionListener {
     //state handling
     public enum GameState {
 
-        SELECTION, MOVEMENT
+        SELECTION, MOVEMENT, END
     }
+
+
 
 
     private GameState currentGameState = GameState.SELECTION;
 
     public Board(ScoreBoard whiteScoreBoard, ScoreBoard blackScoreBoard) {
+
         this.whitePlayer = new Player(Piece.Side.WHITE, whiteScoreBoard);
         this.blackPlayer = new Player(Piece.Side.BLACK, blackScoreBoard);
         this.activePlayer = this.whitePlayer;
         this.inactivePlayer = blackPlayer;
+
 
         //layout handler
         this.setLayout(new GridLayout(NUMBEROFROW, NUMBEROFCOL));
@@ -106,10 +111,12 @@ public class Board extends JPanel implements ActionListener {
     }
 
     public void addToScoreBoard(Piece piece) {
+        System.out.println(piece.getSide());
         if (piece.getSide() == Piece.Side.WHITE) {
             this.blackPlayer.getSb().addPiece(piece);
-        }else{
+        } else {
             this.whitePlayer.getSb().addPiece(piece);
+
         }
     }
 
@@ -122,13 +129,35 @@ public class Board extends JPanel implements ActionListener {
         return null;
     }
 
-    public King getEnnemyKing(Piece.Side side) {
-        for (Piece piece : pieces) {
-            if (piece.isKing() && side != piece.getSide()) {
-                return (King) piece;
-            }
+
+    public void swap(Piece piece) {
+        Object[] possibilities = {Queen.QUEEN_NAME, Bishop.BISHOP_NAME, Knight.KNIGHT_NAME, Rook.ROOK_NAME};
+        Piece newPiece;
+        String s = (String) JOptionPane.showInputDialog(
+                this,
+                "Select a piece to swap with your pawn\n",
+                "Pick a piece",
+                JOptionPane.INFORMATION_MESSAGE, this.getKing(piece.getSide()).getSprite(),
+                possibilities,
+                Queen.QUEEN_NAME);
+        if (s == null) {
+            this.swap(piece);
+        } else {
+            newPiece = switch (s) {
+                case Queen.QUEEN_NAME -> new Queen(piece.getSide(), piece.getPosition(), this);
+                case Bishop.BISHOP_NAME -> new Bishop(piece.getSide(), piece.getPosition(), this);
+                case Knight.KNIGHT_NAME -> new Knight(piece.getSide(), piece.getPosition(), this);
+                default -> new Rook(piece.getSide(), piece.getPosition(), this);
+            };
+
+            piece.deactivate();
+            piece.removeFromCell();
+            newPiece.activate();
+            newPiece.addToCell();
+
+            this.pieces.add(newPiece);
+            this.pieces.remove(piece);
         }
-        return null;
 
     }
 
@@ -142,17 +171,59 @@ public class Board extends JPanel implements ActionListener {
         return this.getCell(coords.getX(), coords.getY());
     }
 
+    private boolean canPlayerMakeMove(Player p) {
+        for (Piece a : this.pieces) {
+            if (a.getSide() == p.getSide()) {
+                if (a.canMove()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean checkWin() {
+        return !canPlayerMakeMove(inactivePlayer) && !getKing(inactivePlayer.getSide()).isSafe();
+    }
+
+    private boolean checkDraw() {
+        return !canPlayerMakeMove(inactivePlayer) && getKing(inactivePlayer.getSide()).isSafe();
+
+    }
+
     //check if coordinates of cases are on board
     public boolean isOnBoard(Coordinates coords) {
         return coords.getX() >= 0 && coords.getX() <= 7 && coords.getY() >= 0 && coords.getY() <= 7;
     }
 
+    private void killAllCells() {
+        for (ArrayList<BoardCell> lines : cells) {
+            for (BoardCell cell : lines) {
+                if (cell.isOccupied()) {
+                    cell.getPiece().kill();
+                }
+                cell.setEnabled(false);
+
+            }
+        }
+    }
+
 
     public void nextRound() {
-        Player played = this.activePlayer;
-        this.activePlayer = this.inactivePlayer;
-        this.inactivePlayer = played;
-        this.selectionPhase();
+        if (checkWin()) {
+            this.currentGameState = GameState.END;
+            JOptionPane.showMessageDialog(getParent(), activePlayer.getSide() + " wins");
+            this.killAllCells();
+        } else if (checkDraw()) {
+            this.killAllCells();
+            this.currentGameState = GameState.END;
+
+        } else {
+            Player played = this.activePlayer;
+            this.activePlayer = this.inactivePlayer;
+            this.inactivePlayer = played;
+            this.selectionPhase();
+        }
     }
 
     public void selectionPhase() {
@@ -170,6 +241,24 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
+    public void disableAllCell() {
+        for (ArrayList<BoardCell> lines : cells) {
+            for (BoardCell cell : lines) {
+                cell.setEnabled(false);
+
+            }
+        }
+    }
+
+    public void enableAllCell() {
+        for (ArrayList<BoardCell> lines : cells) {
+            for (BoardCell cell : lines) {
+                cell.setEnabled(true);
+
+            }
+        }
+    }
+
 
     /**
      * highlights all cells matching the coordinates given
@@ -180,6 +269,7 @@ public class Board extends JPanel implements ActionListener {
         for (Coordinates coord : coordinatesArrayList) {
             this.getCellByCoords(coord).unactivate();
         }
+
     }
 
     @Override
@@ -192,6 +282,7 @@ public class Board extends JPanel implements ActionListener {
                     // also check if it's in game selection mode
                     if (cell.isOccupied() && this.activePlayer.getSide() == cell.getPiece().getSide() && currentGameState == GameState.SELECTION) {
                         this.activePlayer.selectPiece(cell.getPiece());
+
                     } else if (currentGameState == GameState.MOVEMENT) {
                         this.activePlayer.movePiece(cell);
                     }

@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class chessGame extends JFrame {
-    public static final int WINDOW_HEIGHT = 650;
+    public static final int WINDOW_HEIGHT = 710;
     public static final int WINDOW_WIDTH = 650;
 
     public chessGame() {
@@ -15,9 +15,8 @@ public class chessGame extends JFrame {
         ScoreBoard whiteScoreBoard = new ScoreBoard();
         ScoreBoard blackScoreBoard = new ScoreBoard();
         this.add(new Board(whiteScoreBoard, blackScoreBoard), BorderLayout.CENTER);
-
-//        this.add(whiteScoreBoard, BorderLayout.NORTH);
-//        this.add(blackScoreBoard, BorderLayout.SOUTH);
+        this.add(whiteScoreBoard, BorderLayout.SOUTH);
+        this.add(blackScoreBoard, BorderLayout.NORTH);
 
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
